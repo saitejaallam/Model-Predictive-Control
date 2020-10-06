@@ -27,7 +27,7 @@ class ModelPredictiveControl:
 
 mpc = ModelPredictiveControl()
 
-# Set bounds.
+# Optimization code.
 bounds = []
 for i in range(mpc.horizon):
     bounds += [[0, 180]]
