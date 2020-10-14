@@ -18,6 +18,7 @@ def sim_run(options, MPC):
 
     num_inputs = 2
     u = np.zeros(mpc.horizon*num_inputs)
+    print("u", u)
     bounds = []
 
     # Set bounds for inputs bounded optimization.
@@ -48,6 +49,7 @@ def sim_run(options, MPC):
                                 bounds=bounds,
                                 tol = 1e-5)
         print('Step ' + str(i) + ' of ' + str(sim_total) + '   Time ' + str(round(time.time() - start_time,5)))
+        
         u = u_solution.x
         y = mpc.plant_model(state_i[-1], mpc.dt, u[0], u[1])
         predicted_state = np.array([y])

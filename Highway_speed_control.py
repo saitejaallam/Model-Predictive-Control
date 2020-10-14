@@ -17,14 +17,30 @@ class ModelPredictiveControl:
     def plant_model(self, prev_state, dt, pedal, steering):
         x_t = prev_state[0]
         v_t = prev_state[3] # m/s
-        x_t_1 = x_t +v_t*dt
-        v_t_1 = v_t + a_t * dt -v_t/10
+
+        a_t =pedal
+
+        x_dot = v_t 
+        v_dot = a_t
+
+        x_t_1 = x_t +x_dot*dt
+        v_t_1 = v_t + v_dot * dt -(v_t/25)  #a slack variable(vt*10) is subtracted to bring the car to rest if the acceleration is zero
         return [x_t_1, 0, 0, v_t_1]
 
     def cost_function(self,u, *args):
         state = args[0]
         ref = args[1]
-        cost = 0.0
+        cost = 0.0  
+        for k in range(0,self.horizon):
+            #v_start = state[3]
+            state = self.plant_model(state, self.dt, u[k*2], u[k*2+1])
+
+            cost +=  abs(ref[0] - state[0])**2
+            
+            speed_kph =state[3]*3.6
+            if ((speed_kph)>10.0):
+                cost+=speed_kph*100
+
         return cost
 
 sim_run(options, ModelPredictiveControl)
